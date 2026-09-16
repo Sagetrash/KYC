@@ -8,7 +8,8 @@ load_dotenv()
 
 class Settings(BaseModel):
     API_V1_STR: str = "api/v1"
-    GROQ_API_KEY: str = os.getenv("GROQ_API_KEY","")
+    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY","")
+    OCR_MODEL_NAME: str = os.getenv("OCR_MODEL_NAME", "gemini-3.1-flash-lite")
     CORS_ORIGINS: list[str] = [
         "http://localhost:5173",
         "http://localhost:3000",
