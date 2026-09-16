@@ -14,6 +14,6 @@ class ExtractedDocumentData(BaseModel):
 
 class DocumentUploadResponse(BaseModel):
     success: bool
-    data: ExtractedDocumentData
+    data: ExtractedDocumentData | None
     portrait_base64: str | None = Field(None, description="Base64 encoded cropped face photo from ID")
     error: str | None = Field(None, description="Error message if processing failed")

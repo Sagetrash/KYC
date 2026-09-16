@@ -7,6 +7,7 @@ from pydantic import BaseModel
 load_dotenv()
 
 class Settings(BaseModel):
+    PROJECT_NAME: str = "KYC BACKEND"
     API_V1_STR: str = "api/v1"
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY","")
     OCR_MODEL_NAME: str = os.getenv("OCR_MODEL_NAME", "gemini-3.1-flash-lite")
