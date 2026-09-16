@@ -3,7 +3,6 @@ import base64
 import logging
 import urllib.request
 from pathlib import Path
-from typing import Optional
 
 import cv2 as cv
 import numpy as np
@@ -37,7 +36,7 @@ def ensure_yunet_model_downloaded(timeout: int = 15):
         raise RuntimeError(f"YuNet model download failed: {e!s}") from e
 
 
-def crop_face_from_document(image_bytes:bytes, padding_ratio: float = 0.20) -> Optional[str]:
+def crop_face_from_document(image_bytes:bytes, padding_ratio: float = 0.20) -> str | None:
     try:
         ensure_yunet_model_downloaded()
         
