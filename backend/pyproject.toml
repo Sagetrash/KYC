@@ -1,0 +1,27 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Backend for the elaborate KYC system"
+readme = "../README.md"
+authors = [
+    { name = "Sagetrash", email = "sagetrash1435@proton.me" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.141.1",
+    "google-genai>=2.23.0",
+    "numpy>=2.5.3",
+    "opencv-python>=5.0.0.93",
+    "pillow>=12.3.0",
+    "pydantic>=2.13.5",
+    "python-multipart>=0.0.32",
+    "sqlalchemy>=2.0.54",
+    "uvicorn[standard]>=0.53.0",
+]
+
+[project.scripts]
+backend = "backend:main"
+
+[build-system]
+requires = ["uv_build>=0.12.9,<0.13.0"]
+build-backend = "uv_build"
