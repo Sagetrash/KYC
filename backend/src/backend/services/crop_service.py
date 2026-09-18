@@ -2,19 +2,20 @@
 import base64
 import logging
 import urllib.request
-from pathlib import Path
 
 import cv2 as cv
 import numpy as np
 
+from backend.core.config import settings
+
 logger = logging.getLogger(__name__)
 
 
-ASSETS_DIR = Path(__file__).parent.parent / "assets"
+ASSETS_DIR = settings.ASSETS_DIR
 YUNET_MODEL_PATH = ASSETS_DIR / "face_detection_yunet_2023mar.onnx"
 YUNET_MODEL_URL = "https://github.com/opencv/opencv_zoo/raw/main/models/face_detection_yunet/face_detection_yunet_2023mar.onnx"
 
-def ensure_yunet_model_downloaded(timeout: int = 15):
+def ensure_model_yunet(timeout: int = 15):
     if YUNET_MODEL_PATH.exists():
         return
     try:
@@ -38,7 +39,7 @@ def ensure_yunet_model_downloaded(timeout: int = 15):
 
 def crop_face_from_document(image_bytes:bytes, padding_ratio: float = 0.20) -> str | None:
     try:
-        ensure_yunet_model_downloaded()
+        ensure_model_yunet()
         
         # Read image and convert into a color image
         nparr = np.frombuffer(image_bytes, np.uint8)
