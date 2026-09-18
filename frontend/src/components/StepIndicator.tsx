@@ -28,7 +28,7 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep }) => 
           const isPending = index > currentIndex;
 
           return (
-            <div key={step.id} className="flex flex-col items-center gap-2 bg-slate-900 px-2">
+            <div key={step.id} className="flex flex-col items-center gap-2 px-2">
               <div
                 className={clsx(
                   "w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors duration-300",
