@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 ASSETS_DIR = settings.ASSETS_DIR
 YUNET_MODEL_PATH = ASSETS_DIR / "face_detection_yunet_2023mar.onnx"
 YUNET_MODEL_URL = "https://github.com/opencv/opencv_zoo/raw/main/models/face_detection_yunet/face_detection_yunet_2023mar.onnx"
-
+_detector = None
 def ensure_model_yunet(timeout: int = 15):
     if YUNET_MODEL_PATH.exists():
         return
@@ -36,10 +36,22 @@ def ensure_model_yunet(timeout: int = 15):
         logger.error(f"Failed to download YuNet face detection model: {e!s}")
         raise RuntimeError(f"YuNet model download failed: {e!s}") from e
 
-
+def get_detector(img_w,img_h):
+    global _detector
+    if _detector is None:
+        ensure_model_yunet()
+        _detector = cv.FaceDetectorYN.create(
+            model=str(YUNET_MODEL_PATH),
+            config="",
+            input_size=(320, 320),
+            score_threshold=0.6,
+            nms_threshold=0.3
+        )
+    _detector.setInputSize((img_w,img_h))
+    return _detector
+    
 def crop_face_from_document(image_bytes:bytes, padding_ratio: float = 0.20) -> str | None:
     try:
-        ensure_model_yunet()
         
         # Read image and convert into a color image
         nparr = np.frombuffer(image_bytes, np.uint8)
@@ -51,14 +63,7 @@ def crop_face_from_document(image_bytes:bytes, padding_ratio: float = 0.20) -> s
 
         img_h, img_w = img.shape[:2]
 
-        detector = cv.FaceDetectorYN.create(
-            model=str(YUNET_MODEL_PATH),
-            config="",
-            input_size=(img_w, img_h),
-            score_threshold=0.6,
-            nms_threshold=0.3
-        )
-        _,faces = detector.detect(img)
+        _,faces = get_detector(img_w,img_h).detect(img)
         if faces is None or len(faces) == 0:
             logger.info("No face detected")
             return None
