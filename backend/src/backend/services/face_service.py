@@ -43,21 +43,7 @@ def get_recognizer():
         _recognizer = cv.FaceRecognizerSF.create(str(SFACE_MODEL_PATH), "", cv.dnn.DNN_BACKEND_OPENCV, cv.dnn.DNN_TARGET_CPU)
     return _recognizer
 
-def get_embedding(img_bgr: np.ndarray, face_row: np.ndarray) -> np.ndarray | None:
-    try:
-        aligned = get_recognizer().alignCrop(img_bgr, face_row)
-        feat = get_recognizer().feature(aligned)  # 1x128
-        return feat
-    except Exception as e:  # noqa: BLE001
-        logger.error(f"Failed to generate embeddings{e}")
-        return None
-
-def cosine_sim(a, b) -> float:
-    denom = float(np.linalg.norm(a) * np.linalg.norm(b))
-    if denom == 0: return 0.0
-    return float(np.clip(float(a @ b) / denom, -1.0, 1.0))
     
-
 def decode_bgr(image_bytes: bytes):
     try:
         nparr = np.frombuffer(image_bytes,np.uint8)
@@ -84,6 +70,15 @@ def detect_face(img: np.ndarray):
         return best_face
     except Exception as e:
         logger.error(f"Unexpected error during face Detection: {e!s}", exc_info=True)  # noqa: G201
+        return None
+
+def get_embedding(img_bgr: np.ndarray, face_row: np.ndarray) -> np.ndarray | None:
+    try:
+        aligned = get_recognizer().alignCrop(img_bgr, face_row)
+        feat = get_recognizer().feature(aligned)  # 1x128
+        return feat
+    except Exception as e:  # noqa: BLE001
+        logger.error(f"Failed to generate embeddings{e}")
         return None
 
 def embed_from_bytes(image_bytes: bytes)-> tuple[np.ndarray | None, str | None]:
