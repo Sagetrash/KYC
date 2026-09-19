@@ -11,10 +11,12 @@ function App() {
   const [currentStep, setCurrentStep] = useState<StepId>('document');
   // _docData will be passed to SelfieStep / CallStep in Milestones 2–4
   const [_docData, setDocData] = useState<ExtractedDocumentData | null>(null);
-
-  const handleDocumentComplete = (data: ExtractedDocumentData) => {
+  const [idFile, setIdFile] = useState<File | null>(null);
+  
+  const handleDocumentComplete = (data: ExtractedDocumentData,_portrait: string | null,file: File) => {
     setDocData(data);
     setCurrentStep('selfie');
+    setIdFile(file);
   };
 
   const renderStep = () => {
@@ -22,13 +24,13 @@ function App() {
       case 'document':
         return <DocumentStep onComplete={handleDocumentComplete} />;
       case 'selfie':
-        return <SelfieStep onComplete={() => setCurrentStep('voice')} />;
+        return <SelfieStep idFile={idFile} onComplete={() => setCurrentStep('voice')} />;
       case 'voice':
         return <VoiceStep onComplete={() => setCurrentStep('call')} />;
       case 'call':
         return <CallStep onComplete={() => setCurrentStep('result')} />;
       case 'result':
-        return <ResultStep onReset={() => { setCurrentStep('document'); setDocData(null); }} />;
+        return <ResultStep onReset={() => { setCurrentStep('document'); setDocData(null); setIdFile(null); }} />;
       default:
         return null;
     }

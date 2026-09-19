@@ -6,7 +6,7 @@ import { ConfidenceDial } from '../components/ConfidenceDial';
 import clsx from 'clsx';
 
 interface DocumentStepProps {
-  onComplete: (data: ExtractedDocumentData, portrait: string | null) => void;
+  onComplete: (data: ExtractedDocumentData, portrait: string | null, file: File) => void;
 }
 
 export const DocumentStep: React.FC<DocumentStepProps> = ({ onComplete }) => {
@@ -214,7 +214,7 @@ export const DocumentStep: React.FC<DocumentStepProps> = ({ onComplete }) => {
           </div>
 
           <button
-            onClick={() => onComplete(result.data, result.portrait_base64)}
+            onClick={() => { if (selectedFile) onComplete(result.data, result.portrait_base64, selectedFile);}}
             className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] flex items-center justify-center gap-2"
           >
             Continue to Selfie Verification <span className="text-xl">→</span>
