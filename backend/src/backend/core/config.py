@@ -10,9 +10,10 @@ load_dotenv()
 class Settings(BaseModel):
     PROJECT_NAME: str = "KYC BACKEND"
     API_V1_STR: str = "api/v1"
+    FACE_REC_THRESHOLD:float = 0.2
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY","")
     OCR_MODEL_NAME: str = os.getenv("OCR_MODEL_NAME", "gemini-3.1-flash-lite")
-    ASSETS_DIR = Path(__file__).parent.parent / "assets"
+    ASSETS_DIR:Path = Path(__file__).parent.parent / "assets"
     CORS_ORIGINS: list[str] = [
         "http://localhost:5173",
         "http://localhost:3000",
