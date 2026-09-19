@@ -6,6 +6,7 @@ import cv2 as cv
 import numpy as np
 
 from backend.core.config import settings
+from backend.models.face import FaceVerifyResponse
 from backend.services.crop_service import get_detector
 
 logger = logging.getLogger(__name__)
@@ -93,12 +94,18 @@ def embed_from_bytes(image_bytes: bytes)-> tuple[np.ndarray | None, str | None]:
         return None, "embedding failed"
     return emb, None
 
-def verify_faces(id_bytes:bytes, selfie_bytes:bytes)-> dict:
+def verify_faces(id_bytes:bytes, selfie_bytes:bytes)-> FaceVerifyResponse:
     id_emb,id_err = embed_from_bytes(id_bytes)
     selfie_emb,selfie_err = embed_from_bytes(selfie_bytes)
+    response = FaceVerifyResponse(match=None, similarity=0.0, error=None)
     if id_emb is None:
-        return {"match": None, "similarity": 0.0, "error": f"id {id_err}"}
+        response.error = id_err
+        return response
     if selfie_emb is None:
-        return {"match":None,"similarity":0.0, "error":f"selfie {selfie_err}"}
+        response.error = selfie_err
+        return response
     sim = get_recognizer().match(id_emb,selfie_emb)
-    return {"match": sim >= settings.FACE_REC_THRESHOLD, "similarity": sim, "error": None}
+    response.match = sim>=settings.FACE_REC_THRESHOLD
+    response.similarity = float(sim)
+    return response
+    
