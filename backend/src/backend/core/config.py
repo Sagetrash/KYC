@@ -11,6 +11,7 @@ class Settings(BaseModel):
     PROJECT_NAME: str = "KYC BACKEND"
     API_V1_STR: str = "api/v1"
     FACE_REC_THRESHOLD:float = 0.2
+    VOICE_REC_THRESHOLD:float = 0.65
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY","")
     OCR_MODEL_NAME: str = os.getenv("OCR_MODEL_NAME", "gemini-3.1-flash-lite")
     ASSETS_DIR:Path = Path(__file__).parent.parent / "assets"

@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from backend.api.v1.documents import router as documents_router
 from backend.api.v1.face import router as face_router
+from backend.api.v1.voice import router as voice_router
 from backend.core.config import settings
 
 app = FastAPI(
@@ -33,6 +34,7 @@ async def add_process_time_header(req: Request, call_next):
 
 app.include_router(documents_router, prefix = "/api/v1")
 app.include_router(face_router, prefix="/api/v1")
+app.include_router(voice_router, prefix="/api/v1")
 @app.get("/health",tags = ["health"])
 async def health_check():
     return {"status": status.HTTP_200_OK, "service":settings.PROJECT_NAME}
