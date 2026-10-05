@@ -1,1 +1,160 @@
-# KYC PLATFORM
+# 🛡️ OpenKYC Platform
+
+> **Automated Multi-Modal AI Video/Audio KYC & Biometric Verification Platform**  
+> Built with 100% Free & Open-Source Software (FOSS), Google Gemini AI, and Browser Native Web APIs — **$0 API Cost**.
+
+---
+
+## 📌 Overview
+
+**OpenKYC** is an automated, multi-modal identity verification (V-CIP) pipeline designed for financial-grade onboarding. It combines computer vision, deep learning embeddings, and generative AI to deliver robust document extraction, biometric facial matching, and speaker voice verification without relying on paid vendor APIs (no OpenAI, no ElevenLabs, no Twilio).
+
+The system is architected as an interactive multi-step onboarding wizard paired with a fast, asynchronous Python backend.
+
+---
+
+## 🏗️ Architecture & Pipeline Flow
+
+```text
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                      FRONTEND (React 19 + TypeScript + Vite)                    │
+│ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌─────────┐ │
+│ │1. Doc Upload │ │2. Selfie HUD │ │3. Voice Wave │ │4. AI Call    │ │5. Result│ │
+│ └──────┬───────┘ └──────┬───────┘ └──────┬───────┘ └──────┬───────┘ └────▲────┘ │
+└────────┼────────────────┼────────────────┼────────────────┼──────────────┼──────┘
+         │ Multipart Form │ Canvas Frame   │ 16kHz WAV Blobs│ Web Speech   │
+         │ (ID Image)     │ (Live Capture) │ (Enroll/Verify)│ & Audio      │
+┌────────▼────────────────▼────────────────▼────────────────▼──────────────┴──────┐
+│                             BACKEND (FastAPI + Python 3.13)                     │
+│ ┌──────────────────┐ ┌──────────────────┐ ┌──────────────────┐ ┌──────────────┐ │
+│ │ Document Engine  │ │   Face Engine    │ │   Voice Engine   │ │  Call Engine │ │
+│ │(Gemini 3.1 Flash │ │  (OpenCV YuNet + │ │   (ONNX ECAPA    │ │(Gemini Agent │ │
+│ │  + OpenCV YuNet) │ │      SFace)      │ │   VoxCeleb)      │ │ + Browser)   │ │
+│ └──────────────────┘ └──────────────────┘ └──────────────────┘ └──────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## ⚡ Tech Stack & Zero-Cost ($0) Matrix
+
+| Component | Technology | Cost / License | Role & Purpose |
+| :--- | :--- | :--- | :--- |
+| **Backend Framework** | [FastAPI](https://fastapi.tiangolo.com/) + Python 3.13 (`uv`) | Free / MIT | High-performance asynchronous REST API & processing pipeline |
+| **Frontend UI** | [React 19](https://react.dev/), [Vite](https://vitejs.dev/), [Tailwind CSS v4](https://tailwindcss.com/) | Free / MIT | Responsive onboarding wizard with live camera/audio feedback |
+| **Frontend Tooling** | [Bun](https://bun.sh/) + [Oxlint](https://oxc.rs/) | Free / MIT | Ultra-fast JS runtime, package manager, and Rust-based linter |
+| **Document OCR** | Google `gemini-3.1-flash-lite` (`google-genai`) | Free Tier Quota | Multimodal zero-shot ID extraction with structured JSON output |
+| **Face Detection** | OpenCV YuNet DNN (`face_detection_yunet_2023mar.onnx`) | Free / BSD | Fast 230KB face detection & ID portrait cropping |
+| **Face Verification** | OpenCV SFace (`face_recognition_sface.onnx`) | Free / BSD | Lightweight 128-d face embedding cosine comparison |
+| **Voice Biometrics** | ONNX ECAPA-TDNN (`ecapa-speaker-v1.onnx`) + `librosa` | Free / Apache-2.0 | 192-d speaker embedding extraction and cosine similarity verification |
+| **Speech Processing** | Browser Web Audio API & `soundfile` | Native Web / BSD | Client-side 16kHz mono WAV encoding; zero server transcode latency |
+| **Call Interaction** | Web Speech API (STT) + `window.speechSynthesis` (TTS) | Browser Native | Real-time voice interaction without third-party speech costs |
+
+---
+
+## ✨ Features & Onboarding Steps
+
+### 1. 📄 Document Upload & OCR
+- Drag-and-drop ID card/document upload.
+- **Multimodal OCR**: Google Gemini extracts `full_name`, `dob`, `document_number`, and `issuing_country` into typed Pydantic models.
+- **Portrait Extraction**: OpenCV YuNet detects face coordinates on the ID card, applies a 20% margin, crops the portrait, and returns a Base64 JPEG avatar preview.
+
+### 2. 📸 1:1 Face Verification
+- Device camera streaming via `getUserMedia`.
+- Real-time frame capture from live camera stream.
+- **Biometric Matching**: OpenCV SFace extracts 128-d embeddings from both the ID card portrait and the live selfie, computing C++ cosine similarity (`threshold = 0.20` calibrated for scanned ID photos).
+
+### 3. 🎙️ Voice Biometrics & Enrollment
+- In-browser interactive audio recording with dynamic HTML5 Canvas waveform visualization.
+- Dual-clip workflow: Record enrollment phrase & verification repetition.
+- Client-side conversion to 16kHz mono WAV via Web Audio API (`OfflineAudioContext`).
+- Backend speaker verification using **ECAPA-TDNN ONNX**, generating normalized speaker embeddings and matching via cosine similarity.
+
+### 4. 🤖 Interactive AI Verification Call *(In Progress)*
+- Dynamic challenge questions generated by Gemini based on extracted ID metadata.
+- Real-time speech transcription (STT) and AI compliance agent speech synthesis (TTS) using native Web Speech APIs.
+
+### 5. 📊 Scorecard & Decision Engine *(Planned)*
+- Multi-vector biometric scorecard aggregating document, face, voice, and Q&A confidence metrics.
+- SQLite + SQLAlchemy persistence for audit records (storing scores and verdicts only, strictly preserving user privacy with no raw PII).
+
+---
+
+## 🚦 Roadmap & Milestone Status
+
+- [x] **Milestone 1: Scaffolding & Document OCR Engine** (Gemini OCR + YuNet Portrait Cropping)
+- [x] **Milestone 2: 1:1 Face Verification** (SFace Face Matching + Camera Capture)
+- [x] **Milestone 3: Voice Biometrics & Enrollment** (ECAPA-TDNN ONNX + In-Browser WAV Engine)
+- [ ] **Milestone 4: Interactive AI Verification Call** (Gemini Q&A Orchestration + Web Speech)
+- [ ] **Milestone 5: Decision Engine, Scorecard & Inspector Drawer** (Audit Logging & Final Polish)
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- **Python**: `>= 3.13` with [uv](https://github.com/astral-sh/uv) installed
+- **Node/Bun**: [Bun](https://bun.sh/) (or Node 20+)
+- **Google Gemini API Key**: Free tier API key from [Google AI Studio](https://aistudio.google.com/)
+
+---
+
+### Backend Setup
+
+1. Navigate to the `backend` directory:
+   ```bash
+   cd backend
+   ```
+
+2. Create `.env` file from sample / configure your Gemini key:
+   ```env
+   GEMINI_API_KEY=your_gemini_api_key_here
+   OCR_MODEL_NAME=gemini-3.1-flash-lite
+   ```
+
+3. Ensure ONNX biometric model assets are located in `backend/src/backend/assets/`:
+   - `face_detection_yunet_2023mar.onnx`
+   - `face_recognition_sface.onnx`
+   - `ecapa-speaker-v1.onnx`
+   - `fbank-80x201-f32.bin`
+
+4. Install dependencies and start the FastAPI dev server:
+   ```bash
+   uv sync
+   uv run uvicorn backend.main:app --reload --port 8000
+   ```
+   *Interactive API docs available at `http://localhost:8000/docs`.*
+
+---
+
+### Frontend Setup
+
+1. Navigate to the `frontend` directory:
+   ```bash
+   cd frontend
+   ```
+
+2. Install dependencies:
+   ```bash
+   bun install
+   ```
+
+3. Start the development server (configured with automatic `/api` proxy to port 8000):
+   ```bash
+   bun dev
+   ```
+
+4. Open `http://localhost:5173` in your browser.
+
+---
+
+## 🔒 Security & Privacy Policy
+
+- **No Raw PII Persistence**: Audit logs record only verification verdicts, similarity scores, and execution latencies. No sensitive biometric embeddings or raw personal credentials are permanently stored.
+- **Client-Side Offloading**: Audio resampling and camera stream processing execute locally in the browser to reduce payload sizes and protect transit privacy.
+
+---
+
+## 📜 License
+
+This project is licensed under the **MIT License**.
