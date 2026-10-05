@@ -20,6 +20,12 @@ export interface FaceVerifyResponse {
   similarity: number;
   error: string | null;
 }
+
+export interface VoiceVerifyResponse {
+  match: boolean | null;
+  similarity: number;
+  error: string | null;
+}
 export type StepId = 'document' | 'selfie' | 'voice' | 'call' | 'result';
 
 export interface KYCSession {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { StepId, ExtractedDocumentData } from './types';
 import { StepIndicator } from './components/StepIndicator';
 import { DocumentStep } from './steps/DocumentStep';
